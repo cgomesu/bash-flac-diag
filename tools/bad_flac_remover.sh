@@ -47,6 +47,17 @@ end_good () {
 	exit 0
 }
 
+flac_removal () {
+	while read file; do
+		if [[ -f $file ]]; then
+			echo '..............'
+			echo 'Deleting file:' $file
+			rm "$file"
+			echo 'Done.'
+		fi
+	done < $BAD_LOG
+}
+
 # run tool
 start
 BAD_LOG=$1
@@ -54,14 +65,13 @@ check_bad_log
 
 # ask user to confirm
 are_you_sure
-
-if [[ $response = 'y' ]]; then
-	echo '--------'
-	echo 'Starting removal of the bad flac files...'
-	# TODO: remove files
-	echo '--------'
-	end_good
-elif [[ $response = 'n' ]]; then
+if [[ $response = 'n' ]]; then
 	echo 'Better safe than sorry!'
 	end_good
 fi
+# start removal
+echo '--------'
+echo 'Starting removal of the bad flac files...'
+flac_removal
+echo '--------'
+end_good
