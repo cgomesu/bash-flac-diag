@@ -2,12 +2,15 @@
 # author: cgomesu
 # flac cli doc: https://xiph.org/flac/documentation_tools_flac.html
 
-cache_cleanup () {
-	echo '' > $CACHE
+cleanup () {
+	# remove cache file
+	if [[ -f $CACHE ]]; then
+		rm -f $CACHE
+	fi
 }
 
 check_requisites () {
-	REQUISITES=('flac' 'metaflac' 'echo' 'mkdir' 'date' 'cat' 'find' 'touch' 'grep' 'tr')
+	REQUISITES=('flac' 'metaflac' 'echo' 'mkdir' 'date' 'cat' 'find' 'touch' 'grep' 'tr' 'rm')
 	for package in ${REQUISITES[@]}; do
 		if [[ -z $(command -v $package) ]]; then
 			echo 'The program' $package 'is not installed or cannot be found in this users $PATH.'
@@ -17,25 +20,36 @@ check_requisites () {
 	done
 }
 
-end_good () {
-	cache_cleanup
-	echo '###############################################'
-	echo 'REACHED THE END OF THE SCRIPT without ERRORS.'
-	echo '###############################################'
-	exit 0
-}
-
 end_bad () {
-	cache_cleanup
+	cleanup
 	echo '###############################################'
 	echo 'REACHED THE END OF THE SCRIPT with AN ERROR!'
 	echo '###############################################'
 	exit 1
 }
 
+end_good () {
+	cleanup
+	echo '###############################################'
+	echo 'REACHED THE END OF THE SCRIPT without ERRORS.'
+	echo '###############################################'
+	exit 0
+}
+
+end_int () {
+	echo '!! ATTENTION !!'
+	echo 'Received a signal to stop the program right now.'
+	cleanup
+	echo '###############################################'
+	echo 'THE SCRIPT REACHED A CLEAN STOP.'
+	echo '###############################################'
+	exit 1
+}
+
 prepare_test_flac () {
 	echo 'Preparing files and folders to test flac files...'
-	if [[ -z $DIR ]] || [[ ! -d $DIR ]]; then
+	DIR="$1"
+	if [[ -z $DIR || ! -d $DIR ]]; then
 		echo 'No directory was provided or the argument is not a directory.'
 		echo 'Please provide the full path to a directory when running this script.'
 		end_bad
@@ -50,7 +64,7 @@ prepare_test_flac () {
 	    echo '---------------'
 	fi
 	GOOD_LOG=$LOG_FOLDER'good_flacs.log'
-	if [ ! -f $GOOD_LOG ]; then
+	if [[ ! -f $GOOD_LOG ]]; then
 		echo '---------------'
 		echo $GOOD_LOG 'is missing. Creating one...'
 	    touch $GOOD_LOG
@@ -58,7 +72,7 @@ prepare_test_flac () {
 	    echo '---------------'
 	fi
 	BAD_LOG=$LOG_FOLDER'bad_flacs.log'
-	if [ ! -f $BAD_LOG ]; then
+	if [[ ! -f $BAD_LOG ]]; then
 		echo '---------------'
 		echo $BAD_LOG 'is missing. Creating one...' 
 	    touch $BAD_LOG
@@ -75,7 +89,7 @@ prepare_test_flac () {
 	fi
 	# cache in memory
 	CACHE=/tmp/flac_diag.cache
-	if [ ! -f $CACHE ]; then
+	if [[ ! -f $CACHE ]]; then
 		echo '---------------'
 		echo $CACHE 'is missing. Creating one...' 
 	    touch $CACHE
@@ -140,18 +154,23 @@ run_test_flac () {
 }
 
 start () {
-	echo '###############################################'
-	echo 'STARTING THE SCRIPT ...'
-	echo '###############################################'
+	echo '################################################'
+	echo '############# FLAC DIAGNOSTIC TOOL #############'
+	echo '################################################'
+	echo 'This script tests FLAC audio files recursively '
+	echo 'and generates logs with good files (no errors '
+	echo 'found) and bad ones (at least one error found). '
+	echo 'It tests .flac files with the help of the flac '
+	echo 'command line utility.'
+	echo 'For more info, check the repo:'
+	echo 'https://github.com/cgomesu/bash-flac-diag'
+	echo '################################################'
 }
 
 # run the script
-DIR=$1
-
 start
 check_requisites
-
-prepare_test_flac
+prepare_test_flac "$1"
+trap 'end_int' SIGINT SIGTERM SIGKILL
 run_test_flac
-
 end_good
