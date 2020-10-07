@@ -47,12 +47,21 @@ end_good () {
 	exit 0
 }
 
+end_int () {
+	echo '!! ATTENTION !!'
+	echo 'Received a signal to stop the program right now.'
+	echo '############################################'
+	echo '############ SCRIPT INTERRUPTED ############'
+	echo '############################################'
+	exit 1
+}
+
 flac_removal () {
 	while read file; do
 		if [[ -f $file ]]; then
 			echo '..............'
 			echo 'Deleting file:' $file
-			rm "$file"
+			rm -f "$file"
 			echo 'Done.'
 		fi
 	done < $BAD_LOG
@@ -72,6 +81,7 @@ fi
 # start removal
 echo '--------'
 echo 'Starting removal of the bad flac files...'
+trap 'end_int' SIGINT SIGTERM SIGKILL
 flac_removal
 echo '--------'
 end_good
