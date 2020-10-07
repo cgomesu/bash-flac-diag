@@ -143,10 +143,10 @@ run_test_flac () {
 				FILE_FLAC_VERSION=$(metaflac --show-vendor-tag "$file" 2>&1 | grep -oE $REGEX_FLAC_VERSION | tr -dc '0-9')
 				if [[ -z $FILE_FLAC_VERSION ]]; then
 					echo 'I am unable to retrieve the flac version from the file.'
-				elif [[ $FLAC_VERSION < $FILE_FLAC_VERSION ]]; then
+				elif [[ $FLAC_VERSION -lt $FILE_FLAC_VERSION ]]; then
 					echo 'You are possibly using an OUTDATED FLAC VERSION.'
 					echo 'Try to update your flac and run this script again after cleaning' $BAD_LOG '.'
-				elif [[ $FLAC_VERSION >= $FILE_FLAC_VERSION ]]; then
+				elif [[ $FLAC_VERSION -ge $FILE_FLAC_VERSION ]]; then
 					echo 'The audio file is LIKELY CORRUPTED.'
 				fi
 				echo 'The file will be added to' $BAD_LOG
