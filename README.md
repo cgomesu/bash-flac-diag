@@ -1,5 +1,5 @@
 # bash-flac-diag
-This is a simple bash script to test [FLAC audio files](https://en.wikipedia.org/wiki/FLAC) recursively and generate logs with good files (no errors found) and bad ones (at least one error found).  The script tests flac files with the help of [flac cli encoder/decoder](https://xiph.org/flac/documentation_tools_flac.html), which detects errors in the stream and when 
+This is a simple bash script for Linux to test [FLAC audio files](https://en.wikipedia.org/wiki/FLAC) recursively and generate logs with good files (no errors found) and bad ones (at least one error found).  The script tests flac files with the help of [flac cli encoder/decoder](https://xiph.org/flac/documentation_tools_flac.html), which detects errors in the stream and when 
 
 > the MD5 signature of the decoded audio does not match the stored MD5 signature, even when the bitstream is valid.
 
@@ -7,12 +7,41 @@ This tool is meant to be used to identify corrupted flac files that should be de
 
 # Requisites
 * [**flac cli**](https://xiph.org/flac/download.html). Most distributions have a flac package. In Debian, for example, you can run `apt get install flac` to install the cli.
-* standard linux packages (namely, *echo, mkdir, date, cat, find, touch, grep, tr*). If you're running a mainstream distro, you don't need to worry about installing any one of them.  
 
-When running the **`flac_diag.sh`**, the script will attempt to detect all necessary programs and if there's one missing, you'll see a message about it.  Make sure that if they're installed, they're also in your user's `$PATH`.
+* **Standard Linux packages**. (If you're running a mainstream distro, you don't need to worry about installing any one of them.)  
+
+When running **`flac_diag.sh`**, the script will attempt to detect all necessary programs and if there's one missing, you'll see a message about it.  Make sure that if they're installed, they're also in your user's `$PATH`.
 
 # Installation
-TBD
+I've only tested this script with Debian and Ubuntu but it probably works just fine with any other standard Linux distro.
+
+## Debian/Ubuntu
+
+* Via git
+
+```
+sudo apt update
+sudo apt install git -yy
+cd /opt
+git clone https://github.com/cgomesu/bash-flac-diag.git
+chmod +x bash-flac-diag/ -R
+cd bash-flac-diag/
+./install.sh
+```
+
+* Via github cli
+
+```
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0
+sudo apt-add-repository https://cli.github.com/packages
+sudo apt update
+sudo apt install gh
+cd /opt
+gh repo clone cgomesu/bash-flac-diag
+chmod +x bash-flac-diag/ -R
+cd bash-flac-diag/
+./install.sh
+```
 
 # Usage
 To scan and test all flac files inside a music folder recursively, simply run the script adding the **`/full/path/to/music/folder/`** as argument, as follows:
