@@ -9,11 +9,10 @@ This tool is meant to be used to identify corrupted flac files that should be de
 * [**flac cli**](https://xiph.org/flac/download.html). Most distributions have a flac package. In Debian, for example, you can run `apt get install flac` to install the cli.
 * standard linux packages (namely, *echo, mkdir, date, cat, find, touch, grep, tr*). If you're running a mainstream distro, you don't need to worry about installing any one of them.  
 
-When running the **flac_diag.sh**, the script will attempt to detect all necessary programs and if there's one missing, you'll see a message about it.  Make sure that if they're installed, they're also in your user's `$PATH`.
-
+When running the **`flac_diag.sh`**, the script will attempt to detect all necessary programs and if there's one missing, you'll see a message about it.  Make sure that if they're installed, they're also in your user's `$PATH`.
 
 # Usage
-To scan and test all flac files inside a music folder recursively, simply run the script adding the **/full/path/to/music/folder/** as argument, as follows:
+To scan and test all flac files inside a music folder recursively, simply run the script adding the **`/full/path/to/music/folder/`** as argument, as follows:
 
 `./flac_diag.sh /path/to/music/folder/`
 
