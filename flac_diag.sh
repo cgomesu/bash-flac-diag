@@ -13,7 +13,7 @@ check_requisites () {
 	REQUISITES=('flac' 'metaflac' 'echo' 'mkdir' 'date' 'cat' 'find' 'touch' 'grep' 'tr' 'rm')
 	for package in ${REQUISITES[@]}; do
 		if [[ -z $(command -v $package) ]]; then
-			echo 'The program' $package 'is not installed or cannot be found in this users $PATH.'
+			echo 'The following program is not installed or cannot be found in this users $PATH: '$package
 			echo 'Fix it and try again.'
 			end_bad
 		fi
