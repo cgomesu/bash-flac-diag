@@ -11,8 +11,7 @@ are_you_sure () {
 check_bad_log () {
 	if [[ -z $BAD_LOG || ! -f $BAD_LOG ]]; then
 		echo 'No log file was provided as argument or file does not exist.'
-		echo 'Please provide the full path to a bad_flacs.log and try again.'
-		end_bad
+		end "Please provide the full path to a bad_flacs.log and try again." 1
 	fi
 }
 
@@ -33,21 +32,16 @@ start () {
 	echo '-------------------------'
 }
 
-end_bad () {
-	echo '########################################'
-	echo '######### FINISHED with ERRORS #########'
-	echo '########################################'
-	exit 1
+# message then status
+end () {
+	echo '############################################'
+	echo 'END OF THE SCRIPT'
+	echo 'MESSAGE: '$1 
+	echo '############################################'
+	exit $2
 }
 
-end_good () {
-	echo '###########################################'
-	echo '######### FINISHED without ERRORS #########'
-	echo '###########################################'
-	exit 0
-}
-
-end_int () {
+interrupt () {
 	echo '!! ATTENTION !!'
 	echo 'Received a signal to stop the program right now.'
 	echo '############################################'
@@ -63,6 +57,7 @@ flac_removal () {
 			echo 'Deleting file:' $file
 			rm -f "$file"
 			echo 'Done.'
+			echo '..............'
 		fi
 	done < $BAD_LOG
 }
@@ -75,13 +70,14 @@ check_bad_log
 # ask user to confirm
 are_you_sure
 if [[ $response = 'n' ]]; then
-	echo 'Better safe than sorry!'
-	end_good
+	end "Better safe than sorry!" 0
 fi
 # start removal
 echo '--------'
 echo 'Starting removal of the bad flac files...'
-trap 'end_int' SIGINT SIGTERM SIGKILL
+trap 'interrupt' SIGINT SIGHUP SIGTERM SIGKILL
 flac_removal
 echo '--------'
-end_good
+if [[ $? = 0 ]]; then
+	end "The script finished without errors." 0
+fi
