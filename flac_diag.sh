@@ -146,7 +146,7 @@ run_test_flac () {
 				elif [[ $FLAC_VERSION < $FILE_FLAC_VERSION ]]; then
 					echo 'You are possibly using an OUTDATED FLAC VERSION.'
 					echo 'Try to update your flac and run this script again after cleaning' $BAD_LOG '.'
-				elif [[ $FLAC_VERSION > $FILE_FLAC_VERSION ]]; then
+				elif [[ $FLAC_VERSION >= $FILE_FLAC_VERSION ]]; then
 					echo 'The audio file is LIKELY CORRUPTED.'
 				fi
 				echo 'The file will be added to' $BAD_LOG
