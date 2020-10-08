@@ -3,10 +3,12 @@ This is a simple bash script for Linux to test [FLAC audio files](https://en.wik
 
 > the MD5 signature of the decoded audio does not match the stored MD5 signature, even when the bitstream is valid.
 
-This tool is meant to be used to identify corrupted flac files that should be deleted from an audio library, for example.
+This tool is meant to be used to identify corrupted flac files that should be deleted from an audio library, for example. Here's a demo of it:
+
+[![bash-flac-diag demo video](https://img.youtube.com/vi/tPYSjBmLUFs/0.jpg)](https://www.youtube.com/watch?v=tPYSjBmLUFs)
 
 # Requisites
-* [**flac cli**](https://xiph.org/flac/download.html). Most distributions have a flac package. In Debian, for example, you can run `apt get install flac` to install the cli.
+* [**flac cli**](https://xiph.org/flac/download.html). Most distributions have a flac package.
 
 * **Standard Linux packages**. (If you're running a mainstream distro, you don't need to worry about installing any one of them.)  
 
@@ -23,8 +25,8 @@ I've only tested this script with Debian and Ubuntu but it probably works just f
 sudo apt update
 sudo apt install git -yy
 cd /opt
-git clone https://github.com/cgomesu/bash-flac-diag.git
-chmod +x bash-flac-diag/ -R
+sudo git clone https://github.com/cgomesu/bash-flac-diag.git
+sudo chmod +x bash-flac-diag/ -R
 cd bash-flac-diag/
 ./install.sh
 ```
@@ -37,8 +39,8 @@ sudo apt-add-repository https://cli.github.com/packages
 sudo apt update
 sudo apt install gh
 cd /opt
-gh repo clone cgomesu/bash-flac-diag
-chmod +x bash-flac-diag/ -R
+sudo gh repo clone cgomesu/bash-flac-diag
+sudo chmod +x bash-flac-diag/ -R
 cd bash-flac-diag/
 ./install.sh
 ```
