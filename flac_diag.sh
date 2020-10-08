@@ -20,6 +20,32 @@ check_requisites () {
 	done
 }
 
+# compare flac cli version to file's flac version
+compare_flac_version () {
+	if [[ $1 =~ $REGEX_FLAC_VERSION ]]; then
+		CLI_vMAJOR=${BASH_REMATCH[1]}
+		CLI_vMINOR=${BASH_REMATCH[2]}
+		CLI_vPATCH=${BASH_REMATCH[3]}
+	else
+		echo 'Unable to parse the flac version from the cli.'
+		return
+	fi
+	if [[ $2 =~ $REGEX_FLAC_VERSION ]]; then
+		FILE_vMAJOR=${BASH_REMATCH[1]}
+		FILE_vMINOR=${BASH_REMATCH[2]}
+		FILE_vPATCH=${BASH_REMATCH[3]}
+	else
+		echo 'Unable to parse the flac version from the file.'
+		return
+	fi
+	if [[ $CLI_vMAJOR -lt $FILE_vMAJOR ]] || [[ $CLI_vMAJOR -eq $FILE_vMAJOR && $CLI_vMINOR -lt $FILE_vMINOR ]] || [[ $CLI_vMAJOR -eq $FILE_vMAJOR && $CLI_vMINOR -eq $FILE_vMINOR && $CLI_vPATCH -lt $FILE_vPATCH ]]; then
+		echo 'You are possibly using an OUTDATED FLAC VERSION.'
+		echo 'Try to update your flac and run this script again after cleaning' $BAD_LOG '.'
+	else
+		echo 'The audio file is LIKELY CORRUPTED.'
+	fi
+}
+
 # message then status
 end () {
 	cleanup
@@ -45,7 +71,7 @@ prepare_test_flac () {
 	DIR="$1"
 	if [[ -z $DIR || ! -d $DIR ]]; then
 		echo 'No directory was provided or the argument is not a directory.'
-		end "Please provide the full path to a directory when running this script." 1
+		end "Please provide the full path to a valid directory."
 	fi
 	# prepare log folders and files
 	LOG_FOLDER='./log/'
@@ -90,10 +116,8 @@ prepare_test_flac () {
 	    echo '---------------'
 	fi
 	# regex patterns
-	REGEX_FLAC_VERSION='[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}'
+	REGEX_FLAC_VERSION='([0-9]+)\.([0-9]+)\.([0-9]+)'
 	REGEX_FILENAME='[^\/]+$'
-	# flac version into lazy integer
-	FLAC_VERSION=$(flac --version | grep -oE $REGEX_FLAC_VERSION | tr -dc '0-9')
 }
 
 run_test_flac () {
@@ -140,21 +164,24 @@ run_test_flac () {
 			# catch errors due to file not being accessible anymore
 			if [[ -f $file ]]; then
 				echo 'Uh-oh! THE FLAC FILE HAS AN ERROR!'
-				FILE_FLAC_VERSION=$(metaflac --show-vendor-tag "$file" 2>&1 | grep -oE $REGEX_FLAC_VERSION | tr -dc '0-9')
-				if [[ -z $FILE_FLAC_VERSION ]]; then
-					echo 'I am unable to retrieve the flac version from the file.'
-				elif [[ $FLAC_VERSION -lt $FILE_FLAC_VERSION ]]; then
-					echo 'You are possibly using an OUTDATED FLAC VERSION.'
-					echo 'Try to update your flac and run this script again after cleaning' $BAD_LOG '.'
-				elif [[ $FLAC_VERSION -ge $FILE_FLAC_VERSION ]]; then
-					echo 'The audio file is LIKELY CORRUPTED.'
+				# compare flac versions
+				CLI_FLAC_VERSION_RAW=$(flac --version)
+				FILE_FLAC_VERSION_RAW=$(metaflac --show-vendor-tag "$file")
+				if [[ -z $CLI_FLAC_VERSION_RAW || -z $FILE_FLAC_VERSION_RAW ]]; then
+					echo 'Unable to request the flac version from the cli or the file.'
+				else
+					compare_flac_version "$CLI_FLAC_VERSION_RAW" "$FILE_FLAC_VERSION_RAW"
 				fi
 				echo 'The file will be added to' $BAD_LOG
 				echo $file >> $BAD_LOG
-				echo 'To investigate the error, check' $CACHE_ERRORS
-				FILENAME=$(echo $file | grep -oE $REGEX_FILENAME)
-				ERROR_FILE=$CACHE_ERRORS$FILENAME'.err'
-				cat $CACHE > "$ERROR_FILE"
+				if [[ $file =~ $REGEX_FILENAME ]]; then
+					echo 'To investigate the error, check' $CACHE_ERRORS
+					FILENAME=${BASH_REMATCH[0]}
+					ERROR_FILE=$CACHE_ERRORS$FILENAME'.err'
+					cat $CACHE > "$ERROR_FILE"
+				else
+					echo 'Unable to save the error file in' $CACHE_ERRORS
+				fi
 			else
 				echo 'This file is NO LONGER AVAILABLE.'
 				echo 'Will try the next one.'
@@ -189,6 +216,6 @@ check_requisites
 prepare_test_flac "$1"
 trap 'interrupt' SIGINT SIGHUP SIGTERM SIGKILL
 run_test_flac
-if [[ $? = 0 ]]; then
+if [[ $? -eq 0 ]]; then
 	end "The script finished without errors." 0
 fi
