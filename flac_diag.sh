@@ -10,7 +10,7 @@ cleanup () {
 }
 
 check_requisites () {
-	REQUISITES=('flac' 'metaflac' 'echo' 'mkdir' 'date' 'cat' 'find' 'touch' 'grep' 'tr' 'rm')
+	REQUISITES=('flac' 'metaflac' 'echo' 'mkdir' 'date' 'cat' 'find' 'touch' 'grep' 'rm')
 	for package in ${REQUISITES[@]}; do
 		if [[ -z $(command -v $package) ]]; then
 			echo 'The following program is not installed or cannot be found in this users $PATH: '$package

@@ -78,6 +78,6 @@ echo 'Starting removal of the bad flac files...'
 trap 'interrupt' SIGINT SIGHUP SIGTERM SIGKILL
 flac_removal
 echo '--------'
-if [[ $? = 0 ]]; then
+if [[ $? -eq 0 ]]; then
 	end "The script finished without errors." 0
 fi
