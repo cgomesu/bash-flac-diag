@@ -5,7 +5,10 @@ This is a simple bash script for Linux to test [FLAC audio files](https://en.wik
 
 This tool is meant to be used to identify corrupted flac files that should be deleted from an audio library, for example. Here's a demo of it:
 
-[![bash-flac-diag demo video](https://img.youtube.com/vi/tPYSjBmLUFs/0.jpg)](https://www.youtube.com/watch?v=tPYSjBmLUFs)
+<p align="center">
+	<img src="img/demo-slow.gif">
+</p>
+
 
 # Requisites
 * [**flac cli**](https://xiph.org/flac/download.html). Most distributions have a flac package.
