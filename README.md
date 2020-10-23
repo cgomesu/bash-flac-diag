@@ -6,7 +6,7 @@ This is a simple bash script for Linux to test [FLAC audio files](https://en.wik
 This tool is meant to be used to identify corrupted flac files that should be deleted from an audio library, for example. Here's a demo of it:
 
 <p align="center">
-	<img src="img/demo-slow.gif">
+	<a href="https://youtu.be/tPYSjBmLUFs"><img src="img/demo-slow.gif"></a>
 </p>
 
 
