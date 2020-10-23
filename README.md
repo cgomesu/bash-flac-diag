@@ -64,12 +64,21 @@ The script will create a `./log` subfolder with two log files, namely `bad_flacs
 In most cases, after testing all .flac files, you'd want to:
 
 1. Double check a few files in `bad_flacs.log`, to make sure they are actually corrupted;
-2. Then remove all files in `bad_flacs.log` from your music folder.
+2. Make a backup of the current `bad_flacs.log` files;
+3. Attempt to fix the files in `bad_flacs.log` by re-enconding them; then manually recheck the files or clean the `bad_flacs.log` and re-run the `flac_diag.sh` script;
+4. Then if re-encoding doesn't work as expected, remove all files in `bad_flacs.log` from your music folder.
 
+
+## Fixing bad flac files
+To attemp to fix the bad .flac files, you can use a tool in the `./tools` subfolder called **`bad_flac_fixer.sh`**, which takes a `bad_flacs.log` as argument and overwrites every single file listed in there with a re-encoded version of it. To fix all files listed in `./log/bad_flacs.log`, run the following from the git root folder:
+
+`./tools/bad_flac_fixer.sh log/bad_flacs.log` or `bash tools/bad_flac_fixer.sh log/bad_flacs.log`
+
+**Make a backup of your `bad_flacs.log`**, delete/clean the old `./log/bad_flacs.log`, and re-run the `flac_diag.sh` script.  If the errors persist, I suggest to remove the bad files.
+
+
+## Removing bad flac files
 To remove the bad .flac files, you can use a tool in the `./tools` subfolder called **`bad_flac_remover.sh`**, which takes a `bad_flacs.log` as argument and deletes every single file listed in there. To delete all files listed in `./log/bad_flacs.log`, run the following from the git root folder:
 
-`./tools/bad_flac_remover.sh log/bad_flacs.log`
+`./tools/bad_flac_remover.sh log/bad_flacs.log` or `bash tools/bad_flac_remover.sh log/bad_flacs.log`
 
-or
-
-`bash tools/bad_flac_remover.sh log/bad_flacs.log`
